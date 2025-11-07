@@ -115,6 +115,23 @@
         </main>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const favoriteButtons = document.querySelectorAll('.favorite-btn i');
+
+            favoriteButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.classList.contains('fa-regular')) {
+                        button.classList.remove('fa-regular');
+                        button.classList.add('fa-solid');
+                    } else {
+                        button.classList.remove('fa-solid');
+                        button.classList.add('fa-regular');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
