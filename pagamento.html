@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,11 +45,25 @@
             <code id="pix-codigo">000201BR.SUITEBOOK.PAGAMENTO.200.00</code>
         </div>
 
-        <div id="pag-boleto" style="display:none; margin-top:15px;">
+        <div id="pag-boleto" style="display:none;">
             <h3>Pagamento com Boleto</h3>
-            <p>Boleto gerado será apenas um exemplo.</p>
+            <p>Preencha para gerar o boleto bancário.</p>
+
             <label>CPF do pagador:</label>
-            <input type="text" placeholder="000.000.000-00">
+            <input type="text" id="boleto-cpf" placeholder="000.000.000-00">
+
+            <label>Vencimento:</label>
+            <input type="date" id="boleto-venc">
+
+            <br><br>
+            <button type="button" id="gerar-boleto">Gerar Boleto</button>
+
+            <div id="boleto-gerado" style="margin-top:15px; display:none;">
+                <p><strong>Linha Digitável:</strong></p>
+                <code id="boleto-codigo"></code>
+                <br><br>
+                <button type="button" id="copiar-boleto">Copiar Código</button>
+            </div>
         </div>
 
         <br>
@@ -63,14 +78,14 @@
         if (suite) {
             const preco = Number(suite.preco);
             document.getElementById('suite-nome').textContent = suite.nome;
-            document.getElementById('suite-avista').textContent = preco.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-            document.getElementById('suite-parcela').textContent = (preco / 10).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-            
+            document.getElementById('suite-avista').textContent = preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('suite-parcela').textContent = (preco / 10).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
             const select = document.getElementById('parcelas-select');
             for (let i = 1; i <= 10; i++) {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = `${i}x de ${(preco / i).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}`;
+                option.textContent = `${i}x de ${(preco / i).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
                 select.appendChild(option);
             }
         } else {
@@ -90,4 +105,5 @@
         }
     </script>
 </body>
+
 </html>
