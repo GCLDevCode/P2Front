@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - SuiteBook</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+    <div class="page-container">
+
+        <h1 class="logo-title">Pagamento da Suíte</h1>
+        <h2 class="page-subtitle">Resumo da reserva</h2>
+
+        <div class="card">
+            <p><strong>Suíte:</strong> <span id="suite-nome">-</span></p>
+            <p><strong>Valor à vista:</strong> <span id="suite-avista">-</span></p>
+            <p><strong>Ou 10x sem juros de:</strong> <span id="suite-parcela">-</span></p>
+        </div>
+
+        <h3>Escolha a forma de pagamento</h3>
+        <button onclick="selecionarPagamento('cartao')">Cartão de Crédito</button>
+        <button onclick="selecionarPagamento('pix')">Pix</button>
+        <button onclick="selecionarPagamento('boleto')">Boleto</button>
+
+        <div id="pag-cartao" style="display:none; margin-top:15px;">
+            <h3>Pagamento com Cartão</h3>
+            <label>Nome no cartão:</label>
+            <input type="text" placeholder="Nome impresso no cartão">
+            <label>Número do cartão:</label>
+            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+            <label>Validade (MM/AA):</label>
+            <input type="text" placeholder="MM/AA" maxlength="5">
+            <label>CVV:</label>
+            <input type="text" placeholder="123" maxlength="3">
+            <label>Parcelamento:</label>
+            <select id="parcelas-select"></select>
+        </div>
+
+        <div id="pag-pix" style="display:none; margin-top:15px;">
+            <h3>Pagamento com Pix</h3>
+            <p>Use o código abaixo:</p>
+            <code id="pix-codigo">000201BR.SUITEBOOK.PAGAMENTO.200.00</code>
+        </div>
+
+        <div id="pag-boleto" style="display:none; margin-top:15px;">
+            <h3>Pagamento com Boleto</h3>
+            <p>Boleto gerado será apenas um exemplo.</p>
+            <label>CPF do pagador:</label>
+            <input type="text" placeholder="000.000.000-00">
+        </div>
+
+        <br>
+        <button onclick="confirmarPagamento()">Confirmar Pagamento</button>
+        <button onclick="window.history.back()">Voltar</button>
+
+    </div>
+
+    <script>
+        const suite = JSON.parse(localStorage.getItem('suiteSelecionada'));
+
+        if (suite) {
+            const preco = Number(suite.preco);
+            document.getElementById('suite-nome').textContent = suite.nome;
+            document.getElementById('suite-avista').textContent = preco.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            document.getElementById('suite-parcela').textContent = (preco / 10).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            
+            const select = document.getElementById('parcelas-select');
+            for (let i = 1; i <= 10; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${i}x de ${(preco / i).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}`;
+                select.appendChild(option);
+            }
+        } else {
+            window.location.href = 'suites.html';
+        }
+
+        function selecionarPagamento(tipo) {
+            document.getElementById('pag-cartao').style.display = 'none';
+            document.getElementById('pag-pix').style.display = 'none';
+            document.getElementById('pag-boleto').style.display = 'none';
+            document.getElementById('pag-' + tipo).style.display = 'block';
+        }
+
+        function confirmarPagamento() {
+            alert('Pagamento confirmado. Obrigado pela preferência!');
+            window.location.href = 'suites.html';
+        }
+    </script>
+</body>
+</html>

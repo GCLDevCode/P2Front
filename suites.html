@@ -29,7 +29,7 @@
 
             <section class="suites-grid">
 
-                <article class="suite-card">
+                <article class="suite-card" data-preco="200" data-parcelas="10" data-juros="0">
                     <div class="card-image-placeholder"><img src="./Assets/Suite1.jpeg" alt=""></div>
                     <div class="card-details">
                         <div class="card-info">
@@ -44,14 +44,14 @@
                             <p class="price">R$ 0,00</p>
                             <p class="installments">10x de R$</p>
                         </div>
-                        <button class="favorite-btn">
-                            <i class="fa-solid fa-heart"></i>
+                        <button class="favorite-btn" aria-label="Favoritar Suíte 1">
+                            <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
                     <button class="reserve-btn">Reservar</button>
                 </article>
 
-                <article class="suite-card">
+                <article class="suite-card" data-preco="200" data-parcelas="10" data-juros="0">
                     <div class="card-image-placeholder"><img src="./Assets/Suite2.jpeg" alt=""></div>
                     <div class="card-details">
                         <div class="card-info">
@@ -66,14 +66,14 @@
                             <p class="price">R$ 0,00</p>
                             <p class="installments">10x de R$</p>
                         </div>
-                        <button class="favorite-btn">
-                            <i class="fa-solid fa-heart"></i>
+                        <button class="favorite-btn" aria-label="Favoritar Suíte 2">
+                            <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
                     <button class="reserve-btn">Reservar</button>
                 </article>
 
-                <article class="suite-card">
+                <article class="suite-card" data-preco="200" data-parcelas="10" data-juros="0">
                     <div class="card-image-placeholder"><img src="./Assets/Suite3.jpeg" alt=""></div>
                     <div class="card-details">
                         <div class="card-info">
@@ -88,23 +88,29 @@
                             <p class="price">R$ 0,00</p>
                             <p class="installments">10x de R$</p>
                         </div>
-                        <button class="favorite-btn">
+                        <button class="favorite-btn" aria-label="Favoritar Suíte 3">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
                     <button class="reserve-btn">Reservar</button>
                 </article>
 
-                <article class="suite-card">
+                <article class="suite-card" data-preco="200" data-parcelas="10" data-juros="0">
                     <div class="card-image-placeholder"><img src="./Assets/Suite4.jpeg" alt=""></div>
                     <div class="card-details">
                         <div class="card-info">
                             <h3>Suíte 4</h3>
-                            <div class="rating"></div>
+                            <div class="rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                            </div>
                             <p class="price">R$ 0,00</p>
                             <p class="installments">10x de R$</p>
                         </div>
-                        <button class="favorite-btn">
+                        <button class="favorite-btn" aria-label="Favoritar Suíte 4">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
@@ -117,20 +123,58 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const favoriteButtons = document.querySelectorAll('.favorite-btn i');
+            const suiteCards = document.querySelectorAll('.suite-card');
 
-            favoriteButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    if (button.classList.contains('fa-regular')) {
-                        button.classList.remove('fa-regular');
-                        button.classList.add('fa-solid');
-                    } else {
-                        button.classList.remove('fa-solid');
-                        button.classList.add('fa-regular');
-                    }
+            const brl = v => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            suiteCards.forEach(card => {
+                const preco = parseFloat(card.dataset.preco || '0');
+                const parcelas = parseInt(card.dataset.parcelas || '10', 10);
+                const jurosMes = parseFloat(card.dataset.juros || '0');
+
+                let valorParcela;
+                if (jurosMes > 0) {
+                    const i = jurosMes;
+                    const n = parcelas;
+                    valorParcela = preco * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+                } else {
+                    valorParcela = preco / parcelas;
+                }
+
+                const priceEl = card.querySelector('.price');
+                const installmentsEl = card.querySelector('.installments');
+
+                if (priceEl) priceEl.textContent = brl(preco);
+                if (installmentsEl) installmentsEl.textContent = `${parcelas}x de ${brl(valorParcela)} no cartão ${jurosMes > 0 ? '(com juros)' : 'sem juros'}`;
+            });
+
+            document.querySelectorAll('.favorite-btn i').forEach(icon => {
+                icon.addEventListener('click', () => {
+                    icon.classList.toggle('fa-solid');
+                    icon.classList.toggle('fa-regular');
                 });
             });
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.reserve-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const card = btn.closest('.suite-card');
+                    if (!card) return;
+
+                    const nome = (card.querySelector('h3')?.textContent || 'Suíte').trim();
+                    const preco = parseFloat(card.dataset.preco || '200');
+                    if (Number.isNaN(preco)) {
+                        alert('Preço inválido para esta suíte.');
+                        return;
+                    }
+
+                    localStorage.setItem('suiteSelecionada', JSON.stringify({ nome, preco }));
+                    window.location.href = 'pagamento.html';
+                });
+            });
+        });
+
     </script>
 </body>
 
